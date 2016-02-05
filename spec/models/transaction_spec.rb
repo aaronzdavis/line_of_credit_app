@@ -18,4 +18,10 @@ RSpec.describe Transaction, type: :model do
     transaction.line_of_credit = nil
     expect(transaction).to be_invalid
   end
+
+  it 'should reduce Line Of Credit balance when withdrawl transaction is created' do
+    transaction_01 = transaction.save
+    expect(transaction.line_of_credit.balance).to eq(500)
+  end
+
 end
