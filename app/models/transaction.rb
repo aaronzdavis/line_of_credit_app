@@ -5,11 +5,15 @@ class Transaction < ActiveRecord::Base
 
   enum transaction_type: [ :withdrawl, :deposit ]
 
+  scope :previous_30_days, ->{ where("transactions.created_at > ?", 30.days.ago) }
+
   after_create :update_balance
   def update_balance
     if self.withdrawl?
-      self.line_of_credit.balance = self.line_of_credit.balance - self.amount
-      self.line_of_credit.save
+      self.line_of_credit.balance -= self.amount
+    else
+      self.line_of_credit.balance += self.amount
     end
+    self.line_of_credit.save
   end
 end
